@@ -287,18 +287,7 @@ func (rr *ResourceReconciler) OnUpdate(old, cur interface{}) {
 func (rr *ResourceReconciler) OnDelete(obj interface{}) {
 	if _, ok := obj.(*appsv1.StatefulSet); ok {
 		rr.onStatefulSetDelete(obj.(*appsv1.StatefulSet))
-		return
 	}
-
-	key, ok := rr.objectKey(obj)
-	if !ok {
-		return
-	}
-
-	level.Debug(rr.logger).Log("msg", fmt.Sprintf("%s deleted", rr.resourceKind), "key", key)
-	rr.metrics.TriggerByCounter(rr.resourceKind, DeleteEvent).Inc()
-
-	rr.reconcileQ.Add(key)
 }
 
 func (rr *ResourceReconciler) onStatefulSetAdd(ss *appsv1.StatefulSet) {
